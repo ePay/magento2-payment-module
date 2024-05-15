@@ -81,6 +81,8 @@ class UpdateConfiguration implements DataPatchInterface, PatchRevertableInterfac
                 'value' => $oldConfig['value']
             ];
         }
-        $connection->insertOnDuplicate($configTable, $dataToInsert, ['scope', 'scope_id', 'path']);
+        if (!empty($dataToInsert)) {
+            $connection->insertOnDuplicate($configTable, $dataToInsert, ['scope', 'scope_id', 'path']);
+        }
     }
 }
