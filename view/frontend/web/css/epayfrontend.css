@@ -23,8 +23,9 @@
 
 .epay_epay_paymenttype {
     width: 100%;
-    height: 60px;
+    height: 50px;
     display: block;
+    margin-top:8px;
 }
 
 .epay_info_title {

@@ -30,6 +30,7 @@ class EpayConstants
     const ORDER_STATUS = 'order_status';
     const MASS_CAPTURE_INVOICE_MAIL = 'masscaptureinvoicemail';
     const TITLE = 'title';
+    const DESCRIPTION = 'description';
     const MERCHANT_NUMBER = 'merchantnumber';
     const ACCESS_TOKEN = 'accesstoken';
     const SECRET_TOKEN = 'secrettoken';

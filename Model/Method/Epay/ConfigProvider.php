@@ -59,6 +59,9 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
                     'paymentTitle' => $this->_ePayMethod->getConfigData(
                         EpayConstants::TITLE
                     ),
+                    'paymentDescription' => $this->_ePayMethod->getConfigData(
+                        EpayConstants::DESCRIPTION
+                    ),
                     'paymentLogoSrc' => $this->_ePayMethod->getEpayLogoUrl(),
                     'paymentWindowJsUrl' => $this->_ePayMethod->getEPayPaymentWindowJsUrl(
                     ),

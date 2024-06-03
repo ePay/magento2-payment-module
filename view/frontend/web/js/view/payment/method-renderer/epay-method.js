@@ -25,6 +25,9 @@ define(
                 getEpayTitle: function () {
                     return window.checkoutConfig.payment.epay.paymentTitle;
                 },
+                getEpayDescription: function () {
+                    return window.checkoutConfig.payment.epay.paymentDescription;
+                },
                 getEpayLogo: function () {
                     return window.checkoutConfig.payment.epay.paymentLogoSrc;
                 },

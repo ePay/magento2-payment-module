@@ -35,6 +35,12 @@
       <comment><![CDATA[The title of the payment method displayed to the customers.]]></comment>
       <config_path>payment/epay/title</config_path>
     </field>
+    
+    <field id="description" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+        <label><![CDATA[<b>Description</b>]]></label>
+      <config_path>payment/epay/description</config_path>
+    </field>
+
     <field id="merchantnumber" type="text" translate="label comment" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Merchant number:</b>]]></label>
       <comment><![CDATA[The unique merchantnumber received from the payment system. If you don't know your merchantnumber please log into your account <a href="https://ssl.ditonlinebetalingssystem.dk/admin/" target="_blank">here</a>. You can then find your merchantnumber from the menu <b>Settings</b> -> <b>Payment System</b>.]]></comment>
