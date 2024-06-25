@@ -164,7 +164,7 @@ abstract class AbstractPayment extends \Magento\Payment\Model\Method\AbstractMet
      */
     public function canEdit()
     {
-        return false;
+        return true;
     }
 
     /**
