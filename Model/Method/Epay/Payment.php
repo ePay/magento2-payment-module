@@ -144,6 +144,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         return $paymentRequest;
     }
 
+
     /**
      * Create Invoice
      *
@@ -675,5 +676,24 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
     {
         $assetsApi = $this->_epayHelper->getEpayApi(EpayApi::API_ACTION);
         return $assetsApi->getPaymentWindowJSUrl();
+    }
+
+    /**
+     * Retrieve an url for the ePay Paymentwindow
+     *
+     * @return string
+     */
+    public function getEPayPaymentWindowUrl($order)
+    {
+        $paymentRequest = $this->createPaymentRequest($order);
+        
+        $assetsApi = $this->_epayHelper->getEpayApi(EpayApi::API_ACTION);
+
+        $url = $assetsApi->getPaymentWindowUrl($paymentRequest);
+
+        if(is_object($url))
+        {
+            return $url->url;
+        }
     }
 }
