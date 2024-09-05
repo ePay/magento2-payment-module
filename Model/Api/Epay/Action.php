@@ -50,6 +50,8 @@ class Action extends Base
             "&ownreceipt=" . urlencode($paymentRequest->ownreceipt) .
             "&timeout=" . urlencode($paymentRequest->timeout) .
             "&invoice=" . urlencode($paymentRequest->invoice) .
+            "&paymenttype=" . urlencode($paymentRequest->paymenttype) .
+            "&splitpayment=" . urlencode($paymentRequest->splitpayment) .
             "&hash=" . urlencode($paymentRequest->hash);
         $url->url = $baseUrl . $paramString;
         return $url;

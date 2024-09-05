@@ -35,6 +35,8 @@ class EpayConstants
     const ACCESS_TOKEN = 'accesstoken';
     const SECRET_TOKEN = 'secrettoken';
     const MD5_KEY = 'md5key';
+    const PAYMENTTYPE = 'paymenttype';
+    const SPLITPAYMENT = 'splitpayment';
     const PAYMENT_WINDOW_ID = 'paymentwindowid';
     const INSTANT_CAPTURE = 'instantcapture';
     const INSTANT_INVOICE = 'instantinvoice';

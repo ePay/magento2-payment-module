@@ -104,5 +104,15 @@ class Payment
     /**
      * @var string
      */
+    public $paymenttype;
+
+    /**
+     * @var string
+     */
+    public $splitpayment;
+
+    /**
+     * @var string
+     */
     public $hash;
 }

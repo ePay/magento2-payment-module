@@ -136,6 +136,22 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
             $minorunits,
             $roundingMode
         );
+ 
+        $paymenttype = $this->getConfigData(
+            EpayConstants::PAYMENTTYPE,
+            $storeId
+        );
+
+        if($paymenttype)
+        {
+            $paymentRequest->paymenttype = $paymenttype;
+        }
+
+        $paymentRequest->splitpayment = $this->getConfigData(
+            EpayConstants::SPLITPAYMENT,
+            $storeId
+        );
+
         $paymentRequest->hash = $this->_epayHelper->calcEpayMd5Key(
             $order,
             $paymentRequest

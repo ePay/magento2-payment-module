@@ -394,24 +394,14 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             EpayConstants::MD5_KEY,
             $order->getStoreId()
         );
-        $md5stampsValueString = $paymentRequest->encoding .
-            $paymentRequest->cms .
-            $paymentRequest->windowstate .
-            $paymentRequest->mobile .
-            $paymentRequest->merchantnumber .
-            $paymentRequest->windowid .
-            $paymentRequest->amount .
-            $paymentRequest->currency .
-            $paymentRequest->orderid .
-            $paymentRequest->accepturl .
-            $paymentRequest->cancelurl .
-            $paymentRequest->callbackurl .
-            $paymentRequest->instantcapture .
-            $paymentRequest->language .
-            $paymentRequest->ownreceipt .
-            $paymentRequest->timeout .
-            $paymentRequest->invoice .
-            $shopMd5;
+
+        $md5stampsValueString = false;
+        foreach($paymentRequest AS $parameter)
+        {
+            $md5stampsValueString .= $parameter;
+        }
+        $md5stampsValueString .= $shopMd5;
+
         $md5stamp = $this->getHashFromString($md5stampsValueString);
 
         return $md5stamp;
