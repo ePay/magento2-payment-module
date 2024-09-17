@@ -33,27 +33,9 @@ class Action extends Base
         $url = $this->_epayHelper->getEpayApiModel(
             EpayApiModels::REQUEST_MODEL_URL
         );
-        $paramString = "?encoding=" . urlencode($paymentRequest->encoding) .
-            "&cms=" . urlencode($paymentRequest->cms) .
-            "&windowstate=" . urlencode($paymentRequest->windowstate) .
-            "&mobile=" . urlencode($paymentRequest->mobile) .
-            "&merchantnumber=" . urlencode($paymentRequest->merchantnumber) .
-            "&windowid=" . urlencode($paymentRequest->windowid) .
-            "&amount=" . urlencode($paymentRequest->amount) .
-            "&currency=" . urlencode($paymentRequest->currency) .
-            "&orderid=" . urlencode($paymentRequest->orderid) .
-            "&accepturl=" . urlencode($paymentRequest->accepturl) .
-            "&cancelurl=" . urlencode($paymentRequest->cancelurl) .
-            "&callbackurl=" . urlencode($paymentRequest->callbackurl) .
-            "&instantcapture=" . urlencode($paymentRequest->instantcapture) .
-            "&language=" . urlencode($paymentRequest->language) .
-            "&ownreceipt=" . urlencode($paymentRequest->ownreceipt) .
-            "&timeout=" . urlencode($paymentRequest->timeout) .
-            "&invoice=" . urlencode($paymentRequest->invoice) .
-            "&paymenttype=" . urlencode($paymentRequest->paymenttype) .
-            "&splitpayment=" . urlencode($paymentRequest->splitpayment) .
-            "&hash=" . urlencode($paymentRequest->hash);
-        $url->url = $baseUrl . $paramString;
+
+        $url->url = $baseUrl . "?" . http_build_query($paymentRequest);
+
         return $url;
     }
 

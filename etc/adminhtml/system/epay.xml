@@ -186,5 +186,11 @@
       <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
       <config_path>payment/epay/keep_payment_onedit</config_path>
     </field>
+    <field id="ageverificationmode" type="select" translate="label comment" sortOrder="27" showInDefault="1" showInWebsite="1" showInStore="1">
+      <label><![CDATA[<b>Ageverification mode:</b>]]></label>
+      <comment><![CDATA[Activate Ageverification]]></comment>
+      <source_model>Epay\Payment\Model\Config\Source\Ageverificationmode</source_model>
+      <config_path>payment/epay/ageverificationmode</config_path>
+    </field>
   </group>
 </include>

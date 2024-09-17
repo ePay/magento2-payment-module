@@ -109,8 +109,25 @@ class Payment
     /**
      * @var string
      */
+
     public $splitpayment;
 
+    /**
+     * @var string
+     */
+    public $ageverificationcountry;
+    
+    /**
+     * @var string
+     */
+    
+    public $minimumuserage;
+    
+    /**
+     * @var string
+     */
+    public $ageverificationid;
+    
     /**
      * @var string
      */

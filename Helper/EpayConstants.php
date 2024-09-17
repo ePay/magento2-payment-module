@@ -26,6 +26,11 @@ class EpayConstants
     const ROUND_DOWN = "round_down";
     const ROUND_DEFAULT = "round_default";
 
+    //AgeVerfication
+    const AGEVERIFICATION_DISABLED = "ageverification_disabled";
+    const AGEVERIFICATION_ENABLED_ALL = "ageverification_enabled_all";
+    const AGEVERIFICATION_ENABLED_DK = "ageverification_enabled_dk";
+
     //Config constants
     const ORDER_STATUS = 'order_status';
     const MASS_CAPTURE_INVOICE_MAIL = 'masscaptureinvoicemail';
@@ -57,6 +62,7 @@ class EpayConstants
     const ALLOW_LOW_VALUE_EXEMPTION = 'allowlowvalueexemption';
     const LIMIT_LOW_VALUE_EXEMPTION = 'limitlowvalueexemption';
     const TIMEOUT = 'timeout';
+    const AGEVERIFICATIONMODE = 'ageverificationmode';
     //Actions
     const CAPTURE = 'capture';
     const REFUND = 'refund';

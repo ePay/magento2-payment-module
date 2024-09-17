@@ -146,11 +146,56 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         {
             $paymentRequest->paymenttype = $paymenttype;
         }
+        else
+        {
+            unset($paymentRequest->paymenttype);
+        }
 
         $paymentRequest->splitpayment = $this->getConfigData(
             EpayConstants::SPLITPAYMENT,
             $storeId
         );
+
+
+        $ageVerificationMode = $this->getConfigData(
+            EpayConstants::AGEVERIFICATIONMODE,
+            $storeId
+        );
+
+        unset($paymentRequest->minimumuserage);
+        unset($paymentRequest->ageverificationid);
+        unset($paymentRequest->ageverificationcountry);
+
+        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL)
+        {
+            $minimumuserage = 0;
+            $orderItems = $order->getAllVisibleItems();
+            
+            if ($orderItems) 
+            {
+                foreach ($orderItems as $item) 
+                {
+                    if($item->getProduct()->getData('ageVerification') > $minimumuserage)
+                    {
+                        $minimumuserage = $item->getProduct()->getData('ageVerification');
+                    }
+                }
+            }
+
+            if($minimumuserage > 0)
+            {
+                $paymentRequest->minimumuserage = $minimumuserage;
+
+                $shippingAddress = $order->getShippingAddress();
+                $countryId = $shippingAddress->getCountryId();
+                $paymentRequest->ageverificationcountry = $countryId;
+
+                if(!$order->getCustomerIsGuest())
+                {
+                    $paymentRequest->ageverificationid = $order->getCustomerId();
+                }
+            }
+        }
 
         $paymentRequest->hash = $this->_epayHelper->calcEpayMd5Key(
             $order,
