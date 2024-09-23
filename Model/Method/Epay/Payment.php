@@ -166,7 +166,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         unset($paymentRequest->ageverificationid);
         unset($paymentRequest->ageverificationcountry);
 
-        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL)
+        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL || ($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_DK && $order->getShippingAddress()->getCountryId() == "DK"))
         {
             $minimumuserage = 0;
             $orderItems = $order->getAllVisibleItems();
@@ -186,9 +186,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
             {
                 $paymentRequest->minimumuserage = $minimumuserage;
 
-                $shippingAddress = $order->getShippingAddress();
-                $countryId = $shippingAddress->getCountryId();
-                $paymentRequest->ageverificationcountry = $countryId;
+                $paymentRequest->ageverificationcountry = $order->getShippingAddress()->getCountryId();
 
                 if(!$order->getCustomerIsGuest())
                 {
