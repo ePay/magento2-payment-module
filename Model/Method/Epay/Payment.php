@@ -166,7 +166,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         unset($paymentRequest->ageverificationid);
         unset($paymentRequest->ageverificationcountry);
 
-        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL || ($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_DK && $order->getShippingAddress()->getCountryId() == "DK"))
+        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL || ($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_DK && $order->getShippingAddress()?->getCountryId() == "DK"))
         {
             $minimumuserage = 0;
             $orderItems = $order->getAllVisibleItems();
