@@ -18,6 +18,7 @@ use Epay\Payment\Model\Api\EpayApi;
 use Epay\Payment\Model\Api\EpayApiModels;
 use Epay\Payment\Helper\EpayConstants;
 use Magento\Sales\Model\Order\Payment\Transaction;
+use Magento\Framework\App\ObjectManager;
 
 class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
     \Epay\Payment\Model\Method\IPayment
@@ -39,7 +40,6 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
     protected $_canRefundInvoicePartial = true;
     protected $_canVoid = true;
     protected $_canDelete = true;
-
 
     /**
      * Get ePay Auth object
@@ -166,8 +166,11 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         unset($paymentRequest->ageverificationid);
         unset($paymentRequest->ageverificationcountry);
 
-        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL || ($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_DK && $order->getShippingAddress()->getCountryId() == "DK"))
+        if($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_ALL || ($ageVerificationMode == EpayConstants::AGEVERIFICATION_ENABLED_DK && $order->getShippingAddress()?->getCountryId() == "DK"))
         {
+            $objectManager = ObjectManager::getInstance();
+            $categoryFactory = $objectManager->create(\Magento\Catalog\Model\CategoryFactory::class);
+
             $minimumuserage = 0;
             $orderItems = $order->getAllVisibleItems();
             
@@ -175,9 +178,31 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
             {
                 foreach ($orderItems as $item) 
                 {
-                    if($item->getProduct()->getData('ageVerification') > $minimumuserage)
+                    $product_minimumuserage = $item->getProduct()->getData('ageVerification');
+
+                    $category_minimumuserage = 0;
+                    $categoryIds = $item->getProduct()->getCategoryIds();
+                    
+                    if($categoryIds)
                     {
-                        $minimumuserage = $item->getProduct()->getData('ageVerification');
+                        foreach($categoryIds AS $categoryId)
+                        {
+                            $category = $categoryFactory->create()->load($categoryId);
+                            
+                            if($category->getData('ageVerification') > $category_minimumuserage)
+                            {
+                                $category_minimumuserage = $category->getData('ageVerification');
+                            }
+                        }        
+                    }
+
+                    if($product_minimumuserage > $minimumuserage)
+                    {
+                        $minimumuserage = $product_minimumuserage;
+                    }
+                    elseif($category_minimumuserage > $minimumuserage)
+                    {
+                        $minimumuserage = $category_minimumuserage;
                     }
                 }
             }

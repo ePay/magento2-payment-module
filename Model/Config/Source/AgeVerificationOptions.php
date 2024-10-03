@@ -27,11 +27,11 @@ class AgeVerificationOptions extends AbstractSource
     {
         if (null === $this->_options) {
             $this->_options=[
-                                ['label' => 'Ingen', 'value' => 0],
-                                ['label' => '15 år', 'value' => 15],
-                                ['label' => '16 år', 'value' => 16],
-                                ['label' => '18 år', 'value' => 18],
-                                ['label' => '21 år', 'value' => 21]
+                                ['label' => 'None', 'value' => 0],
+                                ['label' => '15 years', 'value' => 15],
+                                ['label' => '16 years', 'value' => 16],
+                                ['label' => '18 years', 'value' => 18],
+                                ['label' => '21 years', 'value' => 21]
                             ];
         }
         return $this->_options;
