@@ -671,9 +671,9 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
     /**
      * @inheritDoc
      */
-    public function canCapture()
+    public function canCapture(): bool
     {
-        if ($this->_canCapture && $this->canAction($this::METHOD_REFERENCE)) {
+        if ($this->_canCapture && $this->canAction($this::METHOD_REFERENCE) && $this->canOnlineAction()) {
             return true;
         }
 
@@ -685,7 +685,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
      */
     public function canRefund()
     {
-        if ($this->_canRefund && $this->canAction($this::METHOD_REFERENCE)) {
+        if ($this->_canRefund && $this->canAction($this::METHOD_REFERENCE) && $this->canOnlineAction()) {
             return true;
         }
 
@@ -697,7 +697,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
      */
     public function canVoid()
     {
-        if ($this->_canVoid && $this->canAction($this::METHOD_REFERENCE)) {
+        if ($this->_canVoid && $this->canAction($this::METHOD_REFERENCE) && $this->canOnlineAction()) {
             return true;
         }
 

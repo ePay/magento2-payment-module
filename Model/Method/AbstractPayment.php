@@ -173,9 +173,15 @@ abstract class AbstractPayment extends \Magento\Payment\Model\Method\AbstractMet
      * @param \Magento\Payment\Model\InfoInterface $payment
      * @return boolean
      */
-    protected function canOnlineAction($payment)
+    protected function canOnlineAction($payment=null)
     {
-        $storeId = $payment->getOrder()->getStoreId();
+        $storeId = null;
+
+        if($payment)
+        {
+            $storeId = $payment->getOrder()->getStoreId();
+        }
+
         if (intval(
                 $this->getConfigData(EpayConstants::REMOTE_INTERFACE, $storeId)
             ) === 1) {
