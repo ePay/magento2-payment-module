@@ -164,6 +164,12 @@
       <config_path>payment/epay/order_status</config_path>
       <comment><![CDATA[The order status after payment is compleated]]></comment>
     </field>
+     <field id="order_status_after_cancel_payment" type="select" translate="label comment" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+      <label><![CDATA[<b>Order Status After Canceled Payment:</b>]]></label>
+      <source_model>Epay\Payment\Model\Config\Source\PendingCanceledStatus</source_model>
+      <config_path>payment/epay/order_status_after_canceled_payment</config_path>
+      <comment><![CDATA[The order status after payment is canceled]]></comment>
+     </field>
     <field id="sort_order" type="text" translate="label comment" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Sort order:</b>]]></label>
       <comment><![CDATA[In which order this payment method is displayed to the customer.]]></comment>

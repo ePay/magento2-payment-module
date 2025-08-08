@@ -68,6 +68,9 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
      */
     protected $_eventManager;
 
+
+    protected $_quoteFactory;
+
     /**
      * AbstractActionController constructor.
      *
@@ -90,7 +93,8 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
         \Epay\Payment\Logger\EpayLogger $epayLogger,
         \Magento\Payment\Helper\Data $paymentHelper,
         \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
-        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
+        \Magento\Quote\Model\QuoteFactory $quoteFactory
     ) {
         parent::__construct($context);
         $this->_orderFactory = $orderFactory;
@@ -101,6 +105,7 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
         $this->_paymentHelper = $paymentHelper;
         $this->_orderSender = $orderSender;
         $this->_invoiceSender = $invoiceSender;
+        $this->_quoteFactory = $quoteFactory;
 
         $this->_eventManager = $context->getEventManager();
     }
@@ -190,7 +195,14 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
                 $paymentStatusAccepted = $payment->getAdditionalInformation(
                     EpayConstants::PAYMENT_STATUS_ACCEPTED
                 );
-                if (empty($epayReference) && $paymentStatusAccepted != true) {
+
+                $paymentMethodInstance = $this->_getPaymentMethodInstance(
+                    $order->getPayment()->getMethod()
+                );
+
+                $orderStatusAfterCanceledPayment = $paymentMethodInstance->getConfigData(EpayConstants::ORDER_STATUS_AFTER_CANCELED_PAYMENT);
+
+                if (empty($epayReference) && $paymentStatusAccepted != true && $orderStatusAfterCanceledPayment != "pending_payment") {
                     $comment = __(
                         "The order was canceled through the payment window"
                     );
@@ -205,6 +217,24 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
                     //Restore Quote
                     $this->_checkoutSession->restoreQuote();
                 } else {
+
+                    if($orderStatusAfterCanceledPayment == "pending_payment")
+                    {
+                        $order->setState(Order::STATE_PENDING_PAYMENT)->setStatus('pending_payment');
+
+                        $quote = $this->_quoteFactory->create()->load($order->getQuoteId());
+
+                        if ($quote && $quote->getId()) {
+                            $quote->setIsActive(true);
+                            // $quote->setReservedOrderId(null);
+                            $quote->save();
+
+                            $this->_checkoutSession->replaceQuote($quote);
+                        }
+
+                        // $this->_checkoutSession->restoreQuote();
+                    }
+
                     $comment = __("Order cancelling attempt avoided");
                     $order->addStatusHistoryComment($comment);
                 }

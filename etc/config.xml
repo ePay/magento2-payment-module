@@ -36,6 +36,7 @@
         <sort_order>1</sort_order>
         <timeout>60</timeout>
         <order_status>processing</order_status>
+        <order_status_after_canceled_payment>canceled</order_status_after_canceled_payment>
         <masscaptureinvoicemail>1</masscaptureinvoicemail>
         <roundingmode>round_default</roundingmode>
         <uncancelorderlines>0</uncancelorderlines>

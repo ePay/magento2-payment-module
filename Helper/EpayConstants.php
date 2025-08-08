@@ -71,4 +71,7 @@ class EpayConstants
 
     //Action lock
     const PAYMENT_STATUS_ACCEPTED = 'payment_status_accepted';
+    
+    const ORDER_STATUS_AFTER_CANCELED_PAYMENT = 'order_status_after_canceled_payment';
+
 }
