@@ -3,6 +3,7 @@
   "description": "ePay payment module for Magento 2  ",
   "type": "magento2-module",
   "version": "3.0.22",
+
   "authors": [
     {
       "name": "ePay Payment Solutions A/S",
