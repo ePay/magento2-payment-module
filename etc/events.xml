@@ -16,9 +16,9 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
   <event name="sales_order_payment_place_start">
-    <observer name="Epay_Online_Sales_Order_Payment_Place_Start" instance="Epay\Payment\Observer\SalesOrderPaymentPlaceStart" method="execute" />
+    <observer name="Epay_Online_Sales_Order_Payment_Place_Start" instance="Epay\Payment\Observer\SalesOrderPaymentPlaceStart" />
   </event>
   <event name="sales_order_manage_inventory">
-    <observer name="Epay_Online_Manage_Inventory_Observer" instance="Epay\Payment\Observer\ManageInventoryObserver" method="execute" />
+    <observer name="Epay_Online_Manage_Inventory_Observer" instance="Epay\Payment\Observer\ManageInventoryObserver" />
   </event>
 </config>
