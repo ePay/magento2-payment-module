@@ -5,10 +5,8 @@ namespace Epay\Payment\Setup\Patch\Data;
 use Magento\Eav\Setup\EavSetupFactory;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\Patch\DataPatchInterface;
-use Magento\Catalog\Model\Category;
-use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 
-class addAgeVerificationCategoryAttribute implements DataPatchInterface
+class addAgeVerificationAttributeOld implements DataPatchInterface
 {
     // @var ModuleDataSetupInterface
     
@@ -36,22 +34,23 @@ class addAgeVerificationCategoryAttribute implements DataPatchInterface
         // @var EavSetup $eavSetup
         $eavSetup = $this->eavSetupFactory->create(['setup' => $this->moduleDataSetup]);
 
-        $eavSetup->addAttribute(
-            \Magento\Catalog\Model\Category::ENTITY, 
-            'ageVerification', 
-            [
-            'type'         => 'int',
-            'label'        => 'Aldersvalidering',
-            'input'        => 'select',
-            'required'     => false,
-            'visible'      => true,
-            'default'      => '',
-            'source'       => 'Epay\Payment\Model\Config\Source\AgeVerificationOptions',
-            'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
-            'group'        => 'General',
-            'required'     => false,
-			'is_user_defined' => true,
-        ]);
+            $eavSetup->addAttribute(
+                \Magento\Catalog\Model\Product::ENTITY,
+                'ageVerification',
+                [
+                    'type'         => 'int',
+                    'label'        => 'Age Verification',
+                    'input'        => 'select',
+                    'required'     => false,
+                    'visible'      => true,
+                    'user_defined' => false,
+                    'used_in_product_listing' => true,
+                    'default'      => '',
+                    'source'       => 'Epay\Payment\Model\Config\Source\AgeVerificationOptions',
+                    'global'       => \Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface::SCOPE_GLOBAL,
+                    'group'        => 'General',
+                ]
+            );    
     }
 
     public static function getDependencies()
