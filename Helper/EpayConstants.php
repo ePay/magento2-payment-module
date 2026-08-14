@@ -70,6 +70,7 @@ class EpayConstants
     const GET_TRANSACTION = 'gettransaction';
 
     //Action lock
+    const ACCEPT_TOKEN = 'accepttoken';
     const PAYMENT_STATUS_ACCEPTED = 'payment_status_accepted';
     
     const ORDER_STATUS_AFTER_CANCELED_PAYMENT = 'order_status_after_canceled_payment';

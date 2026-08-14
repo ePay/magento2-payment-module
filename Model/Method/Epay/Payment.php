@@ -108,7 +108,11 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
         $paymentRequest->orderid = $order->getIncrementId();
         $paymentRequest->accepturl = $this->_urlBuilder->getUrl(
             'epay/epay/accept',
-            ['_secure' => $this->_request->isSecure()]
+            [
+                '_secure' => $this->_request->isSecure(),
+                'orderid' => $order->getIncrementId(),
+                EpayConstants::ACCEPT_TOKEN => $this->_epayHelper->generateAcceptToken($order)
+            ]
         );
         $paymentRequest->cancelurl = $this->_urlBuilder->getUrl(
             'epay/epay/cancel',

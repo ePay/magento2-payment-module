@@ -159,23 +159,49 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
     protected function acceptOrder($methodReference)
     {
         $posted = $this->getRequest()->getParams();
-        if (array_key_exists('orderid', $posted)) {
-            $order = $this->_getOrderByIncrementId($posted['orderid']);
-
-            $this->_checkoutSession->setLastOrderId($order->getId());
-            $this->_checkoutSession->setLastRealOrderId($order->getIncrementId());
-            $this->_checkoutSession->setLastQuoteId($order->getQuoteId());
-            $this->_checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
-
-            $payment = $order->getPayment();
-            if (isset($payment)) {
-                $payment->setAdditionalInformation(
-                    EpayConstants::PAYMENT_STATUS_ACCEPTED,
-                    true
-                );
-                $payment->save();
-            }
+        if (!array_key_exists('orderid', $posted)) {
+            $this->_epayLogger->addCheckoutError(0, 'Accept request missing orderid');
+            $this->_redirect('checkout/cart');
+            return;
         }
+
+        $order = $this->_getOrderByIncrementId($posted['orderid']);
+        if (!isset($order) || !$order->getId()) {
+            $this->_epayLogger->addCheckoutError(
+                $posted['orderid'],
+                'Accept request failed because order could not be found'
+            );
+            $this->_redirect('checkout/cart');
+            return;
+        }
+
+        $token = array_key_exists(EpayConstants::ACCEPT_TOKEN, $posted)
+            ? $posted[EpayConstants::ACCEPT_TOKEN]
+            : null;
+
+        if (!$this->_epayHelper->validateAcceptToken($order, $token)) {
+            $this->_epayLogger->addCheckoutError(
+                $order->getIncrementId(),
+                'Accept request failed token validation'
+            );
+            $this->_redirect('checkout/cart');
+            return;
+        }
+
+        $this->_checkoutSession->setLastOrderId($order->getId());
+        $this->_checkoutSession->setLastRealOrderId($order->getIncrementId());
+        $this->_checkoutSession->setLastQuoteId($order->getQuoteId());
+        $this->_checkoutSession->setLastSuccessQuoteId($order->getQuoteId());
+
+        $payment = $order->getPayment();
+        if (isset($payment)) {
+            $payment->setAdditionalInformation(
+                EpayConstants::PAYMENT_STATUS_ACCEPTED,
+                true
+            );
+            $payment->save();
+        }
+
         $this->_redirect('checkout/onepage/success');
     }
 

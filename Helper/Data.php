@@ -408,6 +408,57 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
 
     /**
+     * Generate accept token for payment window return flow
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return string|null
+     */
+    public function generateAcceptToken($order)
+    {
+        $shopMd5 = $this->getEpayConfigData(
+            EpayConstants::MD5_KEY,
+            $order->getStoreId()
+        );
+
+        if (empty($shopMd5)) {
+            return null;
+        }
+
+        $rawString = implode(
+            '|',
+            [
+                $order->getIncrementId(),
+                $order->getQuoteId(),
+                $order->getStoreId(),
+                $shopMd5
+            ]
+        );
+
+        return $this->getHashFromString($rawString);
+    }
+
+    /**
+     * Validate accept token for payment window return flow
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @param string|null $token
+     * @return bool
+     */
+    public function validateAcceptToken($order, $token)
+    {
+        if (!isset($order) || !$order->getId() || empty($token)) {
+            return false;
+        }
+
+        $expectedToken = $this->generateAcceptToken($order);
+        if (empty($expectedToken)) {
+            return false;
+        }
+
+        return hash_equals($expectedToken, $token);
+    }
+
+    /**
      * Generate the Hash string for callback
      *
      * @param string $rawString
