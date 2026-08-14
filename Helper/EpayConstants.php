@@ -56,6 +56,7 @@ class EpayConstants
     const REMOTE_INTERFACE_PASSWORD = 'remoteinterfacepassword';
     const PAYMENT_GROUP = 'paymentgroup';
     const OWN_RECEIPT = 'ownreceipt';
+    const CURRENCY_MODE = 'currency_mode';
     const ENABLE_INVOICE_DATA = 'enableinvoicedata';
     const ROUNDING_MODE = 'roundingmode';
     const UNCANCEL_ORDER_LINES = 'uncancelorderlines';
@@ -71,6 +72,9 @@ class EpayConstants
 
     //Action lock
     const ACCEPT_TOKEN = 'accepttoken';
+    const CURRENCY_MODE_BASE = 'base';
+    const CURRENCY_MODE_ORDER = 'order';
+    const PAYMENT_CURRENCY_MODE = 'payment_currency_mode';
     const PAYMENT_STATUS_ACCEPTED = 'payment_status_accepted';
     
     const ORDER_STATUS_AFTER_CANCELED_PAYMENT = 'order_status_after_canceled_payment';

@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Copyright (c) 2019. All rights reserved ePay Payment Solutions.
  *
@@ -11,15 +10,24 @@
  * @author    ePay Payment Solutions
  * @copyright ePay Payment Solutions (https://epay.dk)
  * @license   ePay Payment Solutions
- *
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-  <module name="Epay_Payment" setup_version="3.0.26">
-    <sequence>
-      <module name="Magento_Sales" />
-      <module name="Magento_Quote" />
-      <module name="Magento_Checkout" />
-    </sequence>
-  </module>
-</config>
+
+namespace Epay\Payment\Model\Config\Source;
+
+use Epay\Payment\Helper\EpayConstants;
+
+class Currencymode implements \Magento\Framework\Option\ArrayInterface
+{
+    /**
+     * Available currency modes
+     *
+     * @return array
+     */
+    public function toOptionArray()
+    {
+        return [
+            ['value' => EpayConstants::CURRENCY_MODE_BASE, 'label' => __("Base currency")],
+            ['value' => EpayConstants::CURRENCY_MODE_ORDER, 'label' => __("Order currency")],
+        ];
+    }
+}

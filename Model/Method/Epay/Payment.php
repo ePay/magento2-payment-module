@@ -106,17 +106,18 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
     public function createPaymentRequest($order)
     {
         $storeId = $order->getStoreId();
-        $currency = $order->getBaseCurrencyCode();
-        $minorunits = $this->_epayHelper->getCurrencyMinorUnits($currency);
+        $currency = $this->getPaymentCurrencyCode($order);
+        $minorunits = $this->_epayHelper->getCurrencyMinorunits($currency);
         $roundingMode = $this->getConfigData(
             EpayConstants::ROUNDING_MODE,
             $storeId
         );
         $totalAmountMinorUnits = $this->_epayHelper->convertPriceToMinorunits(
-            $order->getBaseTotalDue(),
+            $this->getPaymentTotalDue($order),
             $minorunits,
             $roundingMode
         );
+        $this->persistPaymentCurrencyMode($order);
         $paymentRequest = $this->_epayHelper->getEpayApiModel(
             EpayApiModels::REQUEST_PAYMENT
         );
@@ -335,8 +336,8 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
             }
 
             // add shipment as line
-            $baseShippingAmount = $order->getBaseShippingAmount();
-            if ($baseShippingAmount > 0) {
+            $shippingAmount = $this->getPaymentShippingAmount($order);
+            if ($shippingAmount > 0) {
                 $shippingText = __("Shipping");
                 $shippingDescription = $order->getShippingDescription();
                 $invoice->lines[] = [
@@ -344,7 +345,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
                     "description" => isset($shippingDescription) ? $shippingDescription : $shippingText,
                     "quantity" => 1,
                     "price" => $this->_epayHelper->convertPriceToMinorunits(
-                        $baseShippingAmount,
+                        $shippingAmount,
                         $minorunits,
                         $roundingMode
                     ),
@@ -352,14 +353,14 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
                 ];
             }
             // Fix for bug in Magento 2 shipment discont calculation
-            $baseShipmentDiscountAmount = $order->getBaseShippingDiscountAmount();
-            if ($baseShipmentDiscountAmount > 0) {
+            $shipmentDiscountAmount = $this->getPaymentShippingDiscountAmount($order);
+            if ($shipmentDiscountAmount > 0) {
                 $invoice->lines[] = [
                     "id" => "shipping_discount",
                     "description" => __("Shipping discount"),
                     "quantity" => 1,
                     "price" => $this->_epayHelper->convertPriceToMinorunits(
-                        ($baseShipmentDiscountAmount * -1),
+                        ($shipmentDiscountAmount * -1),
                         $minorunits,
                         $roundingMode
                     ),
@@ -382,11 +383,12 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
      */
     public function calculateItemPrice($item, $minorunits, $roundingMode)
     {
-        $itemPrice = $item->getBaseRowTotal() > 0 ? $item->getBaseRowTotal(
-            ) / intval($item->getQtyOrdered()) : 0;
+        $itemPrice = $this->getPaymentItemRowTotal($item) > 0 ? $this->getPaymentItemRowTotal(
+            $item
+        ) / intval($item->getQtyOrdered()) : 0;
 
-        if ($item->getBaseDiscountAmount() > 0) {
-            $itemDiscount = $item->getBaseDiscountAmount() / intval(
+        if ($this->getPaymentItemDiscountAmount($item) > 0) {
+            $itemDiscount = $this->getPaymentItemDiscountAmount($item) / intval(
                     $item->getQtyOrdered()
                 );
             $itemPrice = $itemPrice - $itemDiscount;
@@ -407,15 +409,189 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
      */
     public function calculateShippingVat($order)
     {
-        if ($order->getBaseShippingTaxAmount() <= 0 || $order->getBaseShippingAmount(
-            ) <= 0) {
+        $shippingTaxAmount = $this->getPaymentShippingTaxAmount($order);
+        $shippingAmount = $this->getPaymentShippingAmount($order);
+
+        if ($shippingTaxAmount <= 0 || $shippingAmount <= 0) {
             return 0;
         }
         $shippingVat = round(
-            ($order->getBaseShippingTaxAmount() / $order->getBaseShippingAmount(
-                )) * 100
+            ($shippingTaxAmount / $shippingAmount) * 100
         );
         return $shippingVat;
+    }
+
+    /**
+     * Return configured payment currency mode
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return string
+     */
+    protected function getPaymentCurrencyMode($order)
+    {
+        $payment = $order->getPayment();
+        if (isset($payment)) {
+            $currencyMode = $payment->getAdditionalInformation(
+                EpayConstants::PAYMENT_CURRENCY_MODE
+            );
+            if (in_array(
+                $currencyMode,
+                [
+                    EpayConstants::CURRENCY_MODE_BASE,
+                    EpayConstants::CURRENCY_MODE_ORDER
+                ],
+                true
+            )) {
+                return $currencyMode;
+            }
+        }
+
+        $currencyMode = $this->getConfigData(
+            EpayConstants::CURRENCY_MODE,
+            $order->getStoreId()
+        );
+
+        if ($currencyMode === EpayConstants::CURRENCY_MODE_ORDER) {
+            return EpayConstants::CURRENCY_MODE_ORDER;
+        }
+
+        return EpayConstants::CURRENCY_MODE_BASE;
+    }
+
+    /**
+     * Persist selected payment currency mode on the order payment
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return void
+     */
+    protected function persistPaymentCurrencyMode($order)
+    {
+        $payment = $order->getPayment();
+        if (!isset($payment)) {
+            return;
+        }
+
+        $payment->setAdditionalInformation(
+            EpayConstants::PAYMENT_CURRENCY_MODE,
+            $this->getPaymentCurrencyMode($order)
+        );
+        $payment->save();
+    }
+
+    /**
+     * Determine whether order currency should be used
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return bool
+     */
+    protected function shouldUseOrderCurrency($order)
+    {
+        return $this->getPaymentCurrencyMode($order) === EpayConstants::CURRENCY_MODE_ORDER;
+    }
+
+    /**
+     * Return payment currency code
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return string
+     */
+    protected function getPaymentCurrencyCode($order)
+    {
+        if ($this->shouldUseOrderCurrency($order)) {
+            return $order->getOrderCurrencyCode();
+        }
+
+        return $order->getBaseCurrencyCode();
+    }
+
+    /**
+     * Return total due used for payment authorization
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return float
+     */
+    protected function getPaymentTotalDue($order)
+    {
+        if ($this->shouldUseOrderCurrency($order)) {
+            return $order->getTotalDue();
+        }
+
+        return $order->getBaseTotalDue();
+    }
+
+    /**
+     * Return shipping amount used for payment invoice
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return float
+     */
+    protected function getPaymentShippingAmount($order)
+    {
+        if ($this->shouldUseOrderCurrency($order)) {
+            return $order->getShippingAmount();
+        }
+
+        return $order->getBaseShippingAmount();
+    }
+
+    /**
+     * Return shipping discount amount used for payment invoice
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return float
+     */
+    protected function getPaymentShippingDiscountAmount($order)
+    {
+        if ($this->shouldUseOrderCurrency($order)) {
+            return $order->getShippingDiscountAmount();
+        }
+
+        return $order->getBaseShippingDiscountAmount();
+    }
+
+    /**
+     * Return shipping tax amount used for payment invoice
+     *
+     * @param \Magento\Sales\Model\Order $order
+     * @return float
+     */
+    protected function getPaymentShippingTaxAmount($order)
+    {
+        if ($this->shouldUseOrderCurrency($order)) {
+            return $order->getShippingTaxAmount();
+        }
+
+        return $order->getBaseShippingTaxAmount();
+    }
+
+    /**
+     * Return row total used for item price calculation
+     *
+     * @param \Magento\Sales\Model\Order\Item $item
+     * @return float
+     */
+    protected function getPaymentItemRowTotal($item)
+    {
+        if ($this->shouldUseOrderCurrency($item->getOrder())) {
+            return $item->getRowTotal();
+        }
+
+        return $item->getBaseRowTotal();
+    }
+
+    /**
+     * Return discount amount used for item price calculation
+     *
+     * @param \Magento\Sales\Model\Order\Item $item
+     * @return float
+     */
+    protected function getPaymentItemDiscountAmount($item)
+    {
+        if ($this->shouldUseOrderCurrency($item->getOrder())) {
+            return $item->getDiscountAmount();
+        }
+
+        return $item->getBaseDiscountAmount();
     }
 
     /**
@@ -465,7 +641,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
                 );
             }
 
-            $currency = $order->getBaseCurrencyCode();
+            $currency = $this->getPaymentCurrencyCode($order);
             $minorunits = $this->_epayHelper->getCurrencyMinorunits($currency);
             $roundingMode = $this->getConfigData(
                 EpayConstants::ROUNDING_MODE,
@@ -539,7 +715,7 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
                 $this::METHOD_REFERENCE
             );
 
-            $currency = $order->getBaseCurrencyCode();
+            $currency = $this->getPaymentCurrencyCode($order);
             $storeId = $order->getStoreId();
             $minorunits = $this->_epayHelper->getCurrencyMinorunits($currency);
             $roundingMode = $this->getConfigData(
