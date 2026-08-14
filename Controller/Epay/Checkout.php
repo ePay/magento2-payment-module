@@ -22,7 +22,6 @@ class Checkout extends \Epay\Payment\Controller\AbstractActionController
     public function execute()
     {
         $order = $this->_getOrder();
-        $this->setOrderDetails($order);
         $result = $this->getEPayPaymentWindowRequest($order);
         $resultJson = json_encode($result);
 

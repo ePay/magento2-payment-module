@@ -21,6 +21,7 @@
         <active>0</active>
         <model>Epay\Payment\Model\Method\Epay\Payment</model>
         <title>ePay Payment Solutions</title>
+        <payment_action>order</payment_action>
         <paymentwindowid>1</paymentwindowid>
         <instantcapture>0</instantcapture>
         <instantinvoice>0</instantinvoice>

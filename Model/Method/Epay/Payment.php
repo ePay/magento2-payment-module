@@ -17,6 +17,7 @@ namespace Epay\Payment\Model\Method\Epay;
 use Epay\Payment\Model\Api\EpayApi;
 use Epay\Payment\Model\Api\EpayApiModels;
 use Epay\Payment\Helper\EpayConstants;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\Transaction;
 use Magento\Framework\App\ObjectManager;
 
@@ -34,12 +35,40 @@ class Payment extends \Epay\Payment\Model\Method\AbstractPayment implements
      * Payment Method feature
      */
     protected $_isGateway = true;
+    protected $_isInitializeNeeded = true;
+    protected $_canOrder = true;
     protected $_canCapture = true;
     protected $_canCapturePartial = true;
     protected $_canRefund = true;
     protected $_canRefundInvoicePartial = true;
     protected $_canVoid = true;
     protected $_canDelete = true;
+
+    /**
+     * Initialize payment state for redirect gateway flow
+     *
+     * @param string $paymentAction
+     * @param \Magento\Framework\DataObject $stateObject
+     * @return $this
+     */
+    public function initialize($paymentAction, $stateObject)
+    {
+        $stateObject->setState(Order::STATE_PENDING_PAYMENT);
+        $stateObject->setStatus(Order::STATE_PENDING_PAYMENT);
+        $stateObject->setIsNotified(false);
+
+        return $this;
+    }
+
+    /**
+     * Use Magento redirect gateway initialization flow
+     *
+     * @return bool
+     */
+    public function isInitializeNeeded()
+    {
+        return true;
+    }
 
     /**
      * Get ePay Auth object
