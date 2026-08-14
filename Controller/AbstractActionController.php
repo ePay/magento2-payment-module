@@ -143,19 +143,6 @@ abstract class AbstractActionController extends \Magento\Framework\App\Action\Ac
         return $this->_orderFactory->create()->loadByIncrementId($incrementId);
     }
 
-    /**
-     * Set the order details
-     *
-     * @param \Magento\Sales\Model\Order $order
-     */
-    protected function setOrderDetails($order)
-    {
-        $message = __("Order placed and is now awaiting payment authorization");
-        $order->addStatusHistoryComment($message);
-        $order->setIsNotified(false);
-        $order->save();
-    }
-
     protected function acceptOrder($methodReference)
     {
         $posted = $this->getRequest()->getParams();
