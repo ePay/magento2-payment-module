@@ -158,41 +158,47 @@
       <source_model>Epay\Payment\Model\Config\Source\Roundingmode</source_model>
       <config_path>payment/epay/roundingmode</config_path>
     </field>
-     <field id="order_status" type="select" translate="label comment" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+    <field id="currency_mode" type="select" translate="label comment" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+      <label><![CDATA[<b>Currency mode:</b>]]></label>
+      <comment><![CDATA[Choose whether ePay should use the order base currency or the displayed order currency for authorization, capture and refund.]]></comment>
+      <source_model>Epay\Payment\Model\Config\Source\Currencymode</source_model>
+      <config_path>payment/epay/currency_mode</config_path>
+    </field>
+     <field id="order_status" type="select" translate="label comment" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Order Status After Payment:</b>]]></label>
       <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
       <config_path>payment/epay/order_status</config_path>
       <comment><![CDATA[The order status after payment is compleated]]></comment>
     </field>
-     <field id="order_status_after_cancel_payment" type="select" translate="label comment" sortOrder="22" showInDefault="1" showInWebsite="1" showInStore="1">
+     <field id="order_status_after_cancel_payment" type="select" translate="label comment" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Order Status After Canceled Payment:</b>]]></label>
       <source_model>Epay\Payment\Model\Config\Source\PendingCanceledStatus</source_model>
       <config_path>payment/epay/order_status_after_canceled_payment</config_path>
       <comment><![CDATA[The order status after payment is canceled]]></comment>
      </field>
-    <field id="sort_order" type="text" translate="label comment" sortOrder="23" showInDefault="1" showInWebsite="1" showInStore="1">
+    <field id="sort_order" type="text" translate="label comment" sortOrder="24" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Sort order:</b>]]></label>
       <comment><![CDATA[In which order this payment method is displayed to the customer.]]></comment>
       <config_path>payment/epay/sort_order</config_path>
     </field>
-     <field id="uncancelorderlines" type="select" translate="label comment" sortOrder="24" showInDefault="1" showInWebsite="1" showInStore="1">
+     <field id="uncancelorderlines" type="select" translate="label comment" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Un-Cancel order lines:</b>]]></label>
       <comment><![CDATA[When this is enabled, the module will try to restore the canceled order lines if the order gets paid after the order is canceled. This feature is against normal Magento behavior and we cannot guarantee that there will not be any side effects. ]]></comment>
       <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
       <config_path>payment/epay/uncancelorderlines</config_path>
     </field> 
-     <field id="timeout" type="text" translate="label comment" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+     <field id="timeout" type="text" translate="label comment" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Timeout:</b>]]></label>
       <comment><![CDATA[Time in minutes the customer has to complete the payment.]]></comment>
       <config_path>payment/epay/timeout</config_path>
     </field>
-    <field id="keep_payment_onedit" type="select" translate="label comment" sortOrder="26" showInDefault="1" showInWebsite="1" showInStore="1">
+    <field id="keep_payment_onedit" type="select" translate="label comment" sortOrder="27" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Keep the payment when order is edited</b>]]></label>
       <comment><![CDATA[If this is enabled, you will have to manualy handle the payment in the epay administration or move payment to the new order. If disabled, this will follow Magentos default behaviour and cancel the payment at epay when an order is edited.]]></comment>
       <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
       <config_path>payment/epay/keep_payment_onedit</config_path>
     </field>
-    <field id="ageverificationmode" type="select" translate="label comment" sortOrder="27" showInDefault="1" showInWebsite="1" showInStore="1">
+    <field id="ageverificationmode" type="select" translate="label comment" sortOrder="28" showInDefault="1" showInWebsite="1" showInStore="1">
       <label><![CDATA[<b>Ageverification mode:</b>]]></label>
       <comment><![CDATA[Activate Ageverification]]></comment>
       <source_model>Epay\Payment\Model\Config\Source\Ageverificationmode</source_model>

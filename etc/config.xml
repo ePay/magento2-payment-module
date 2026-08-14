@@ -23,6 +23,7 @@
         <title>ePay Payment Solutions</title>
         <payment_action>order</payment_action>
         <paymentwindowid>1</paymentwindowid>
+        <currency_mode>base</currency_mode>
         <instantcapture>0</instantcapture>
         <instantinvoice>0</instantinvoice>
         <instantinvoicemail>0</instantinvoicemail>
